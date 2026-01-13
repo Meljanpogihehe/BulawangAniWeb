@@ -337,6 +337,47 @@
         </div>
       </div>
     </div>
+
+    <!-- Edit Schedule Modal -->
+    <div v-if="showScheduleModal" class="modal-overlay" @click="closeScheduleModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>Edit Payout Schedule</h2>
+          <button class="modal-close" @click="closeScheduleModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="schedule-type">Schedule Type:</label>
+            <select v-model="editingSchedule.type" id="schedule-type" class="form-input">
+              <option value="Weekly">Weekly</option>
+              <option value="Bi-weekly">Bi-weekly</option>
+              <option value="Monthly (15th)">Monthly (15th)</option>
+              <option value="Monthly (30th)">Monthly (30th)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="minimum-amount">Minimum Amount (₱):</label>
+            <input v-model.number="editingSchedule.minimumAmount" id="minimum-amount" type="number" class="form-input" placeholder="5000">
+          </div>
+
+          <div class="form-group">
+            <label for="processing-time">Processing Time:</label>
+            <select v-model="editingSchedule.processingTime" id="processing-time" class="form-input">
+              <option value="1-3 business days">1-3 business days</option>
+              <option value="2-5 business days">2-5 business days</option>
+              <option value="5-7 business days">5-7 business days</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" @click="closeScheduleModal">Cancel</button>
+          <button class="btn-primary" @click="saveSchedule">Save Changes</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -352,11 +393,17 @@ export default {
     const showPayoutModal = ref(false)
     const selectedPayout = ref(null)
     const showMethodModal = ref(false)
+    const showScheduleModal = ref(false)
     const newMethod = ref({
       type: 'bank',
       accountName: '',
       accountNumber: '',
       bankName: ''
+    })
+    const editingSchedule = ref({
+      type: 'Monthly (15th)',
+      minimumAmount: 5000,
+      processingTime: '1-3 business days'
     })
 
     // Mock payout data
@@ -614,7 +661,21 @@ export default {
     }
 
     const editSchedule = () => {
-      alert('Editing payout schedule...')
+      editingSchedule.value = {
+        type: 'Monthly (15th)',
+        minimumAmount: 5000,
+        processingTime: '1-3 business days'
+      }
+      showScheduleModal.value = true
+    }
+
+    const closeScheduleModal = () => {
+      showScheduleModal.value = false
+    }
+
+    const saveSchedule = () => {
+      // Update schedule with edited values
+      closeScheduleModal()
     }
 
     const exportPayouts = () => {
@@ -654,6 +715,10 @@ export default {
       saveNewMethod,
       closeMethodModal,
       editSchedule,
+      closeScheduleModal,
+      saveSchedule,
+      editingSchedule,
+      showScheduleModal,
       exportPayouts
     }
   }
