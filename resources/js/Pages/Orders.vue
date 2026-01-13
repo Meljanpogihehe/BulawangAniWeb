@@ -280,8 +280,129 @@
           </div>
         </div>
       </div>
+  
+      <!-- Order Tracking Modal -->
+      <div v-if="trackingModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-[2rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-scroll">
+          <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-2xl font-black">Track Order #{{ trackingOrder?.id }}</h3>
+              <button @click="closeTrackingModal" class="text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+  
+            <div v-if="trackingOrder" class="space-y-8">
+              <!-- Current Status -->
+              <div class="bg-gradient-to-r from-green-50 to-yellow-50 rounded-2xl p-6 border border-green-100">
+                <div class="flex items-center gap-4 mb-4">
+                  <div :class="getStatusIcon(trackingOrder.status)" class="w-16 h-16 rounded-full flex items-center justify-center text-white shadow-lg">
+                    <span class="text-2xl">{{ getStatusEmoji(trackingOrder.status) }}</span>
+                  </div>
+                  <div>
+                    <h4 class="font-black text-xl text-gray-900">{{ trackingOrder.status }}</h4>
+                    <p class="text-gray-600">{{ getStatusMessage(trackingOrder.status) }}</p>
+                    <p class="text-sm text-gray-500 mt-1">Estimated delivery: {{ trackingOrder.estimatedDelivery || 'TBD' }}</p>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Tracking Progress -->
+              <div class="bg-white border border-gray-100 rounded-2xl p-6">
+                <h4 class="font-black text-lg mb-6">Order Progress</h4>
+                <div class="relative">
+                  <!-- Progress Bar -->
+                  <div class="w-full bg-gray-200 rounded-full h-3 mb-8">
+                    <div :class="getProgressBarColor(trackingOrder.status)"
+                         class="h-3 rounded-full transition-all duration-1000 ease-out"
+                         :style="{ width: getProgressPercentage(trackingOrder.status) + '%' }"></div>
+                  </div>
+  
+                  <!-- Timeline Steps -->
+                  <div class="space-y-6">
+                    <div v-for="(step, index) in trackingOrder.timeline" :key="index"
+                         class="flex items-start gap-4">
+                      <div :class="step.completed ? 'bg-green-600' : step.current ? 'bg-blue-600 animate-pulse' : 'bg-gray-300'"
+                           class="w-5 h-5 rounded-full flex-shrink-0 mt-1 flex items-center justify-center">
+                        <div v-if="step.completed" class="w-2 h-2 bg-white rounded-full"></div>
+                        <div v-else-if="step.current" class="w-2 h-2 bg-white rounded-full animate-ping"></div>
+                      </div>
+                      <div class="flex-1 pb-6">
+                        <div class="flex items-center justify-between">
+                          <p :class="step.completed ? 'text-gray-900' : step.current ? 'text-blue-600' : 'text-gray-500'"
+                             class="font-bold text-lg">
+                            {{ step.title }}
+                          </p>
+                          <span :class="step.completed ? 'text-green-600' : step.current ? 'text-blue-600' : 'text-gray-400'"
+                                class="text-sm font-medium">
+                            {{ step.time }}
+                          </span>
+                        </div>
+                        <p class="text-gray-600 mt-1">{{ step.description || getStepDescription(step.title) }}</p>
+                        <div v-if="step.location" class="flex items-center gap-2 mt-2 text-sm text-gray-500">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          {{ step.location }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Delivery Information -->
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white border border-gray-100 rounded-2xl p-6">
+                  <h4 class="font-black text-lg mb-4">Delivery Details</h4>
+                  <div class="space-y-3">
+                    <div class="flex justify-between">
+                      <span class="text-gray-600">Courier:</span>
+                      <span class="font-bold">{{ trackingOrder.courier || 'Bulawang Ani Logistics' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-600">Tracking Number:</span>
+                      <span class="font-bold font-mono">{{ trackingOrder.trackingNumber || 'BA' + trackingOrder.id }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-600">Estimated Delivery:</span>
+                      <span class="font-bold">{{ trackingOrder.estimatedDelivery || 'Within 2-3 days' }}</span>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="bg-white border border-gray-100 rounded-2xl p-6">
+                  <h4 class="font-black text-lg mb-4">Delivery Address</h4>
+                  <div class="text-gray-900">
+                    <p class="font-bold">{{ trackingOrder.delivery.name }}</p>
+                    <p>{{ trackingOrder.delivery.phone }}</p>
+                    <p>{{ trackingOrder.delivery.address }}</p>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap gap-4 pt-4">
+                <button @click="viewOrderDetails(trackingOrder); closeTrackingModal()"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">
+                  View Full Details
+                </button>
+                <button class="px-6 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition">
+                  Contact Courier
+                </button>
+                <button class="px-6 py-3 bg-gray-600 text-white rounded-xl font-bold hover:bg-gray-700 transition">
+                  Download Receipt
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
+  
     <footer class="bg-white border-t pt-20 pb-10 mt-16">
       <div class="max-w-7xl mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
@@ -370,6 +491,8 @@ import { useCartStore } from '../stores/cart'
 const ordersStore = useOrdersStore()
 const cartStore = useCartStore()
 const selectedOrder = ref(null);
+const trackingModalOpen = ref(false);
+const trackingOrder = ref(null);
 
 const viewOrderDetails = (order) => {
   selectedOrder.value = order;
@@ -380,8 +503,13 @@ const closeOrderDetails = () => {
 };
 
 const trackOrder = (order) => {
-  // In a real app, this would navigate to a tracking page or open a modal
-  alert(`Tracking order ${order.id}`);
+  trackingOrder.value = order;
+  trackingModalOpen.value = true;
+};
+
+const closeTrackingModal = () => {
+  trackingModalOpen.value = false;
+  trackingOrder.value = null;
 };
 
 const getStatusColor = (status) => {
@@ -425,6 +553,42 @@ const getStatusMessage = (status) => {
     case 'Pending': return 'Your order has been received and is pending processing.';
     case 'Cancelled': return 'This order has been cancelled.';
     default: return 'Order status unknown.';
+  }
+};
+
+const getProgressPercentage = (status) => {
+  switch (status) {
+    case 'Pending': return 10;
+    case 'Preparing': return 30;
+    case 'On the Way': return 70;
+    case 'Delivered': return 100;
+    case 'Cancelled': return 0;
+    default: return 0;
+  }
+};
+
+const getProgressBarColor = (status) => {
+  switch (status) {
+    case 'Delivered': return 'bg-green-600';
+    case 'On the Way': return 'bg-blue-600';
+    case 'Preparing': return 'bg-yellow-600';
+    case 'Pending': return 'bg-gray-600';
+    case 'Cancelled': return 'bg-red-600';
+    default: return 'bg-gray-600';
+  }
+};
+
+const getStepDescription = (title) => {
+  switch (title) {
+    case 'Order Placed': return 'Your order has been received and is being processed.';
+    case 'Payment Confirmed': return 'Your payment has been verified and processed.';
+    case 'Order Confirmed': return 'Your order details have been confirmed by our team.';
+    case 'Preparing Order': return 'Your items are being carefully packed for shipment.';
+    case 'Quality Check': return 'Final quality inspection before shipping.';
+    case 'Shipped': return 'Your order has been handed over to our delivery partner.';
+    case 'Out for Delivery': return 'Your order is on its way to your location.';
+    case 'Delivered': return 'Your order has been successfully delivered.';
+    default: return 'Processing your order...';
   }
 };
 </script>
