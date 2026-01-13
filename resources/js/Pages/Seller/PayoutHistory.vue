@@ -458,210 +458,38 @@
                         />
                     </div>
 
-                    <div class="form-group">
-                        <label for="account-number">Account Number:</label>
-                        <input
-                            v-model="newMethod.accountNumber"
-                            id="account-number"
-                            type="text"
-                            class="form-input"
-                            placeholder="Account or phone number"
-                        />
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn-secondary" @click="closeMethodModal">
-                        Cancel
-                    </button>
-                    <button class="btn-primary" @click="saveNewMethod">
-                        Add Method
-                    </button>
-                </div>
-            </div>
+          <div class="form-group">
+            <label for="account-number">Account Number:</label>
+            <input v-model="newMethod.accountNumber" id="account-number" type="text" class="form-input" placeholder="Account or phone number">
+          </div>
         </div>
-
-        <!-- Edit Schedule Modal -->
-        <div
-            v-if="showScheduleModal"
-            class="modal-overlay"
-            @click="closeScheduleModal"
-        >
-            <div class="modal-content" @click.stop>
-                <div class="modal-header">
-                    <h2>Edit Payout Schedule</h2>
-                    <button class="modal-close" @click="closeScheduleModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="schedule-type">Schedule Type:</label>
-                        <select
-                            v-model="editingSchedule.type"
-                            id="schedule-type"
-                            class="form-input"
-                        >
-                            <option value="Weekly">Weekly</option>
-                            <option value="Bi-weekly">Bi-weekly</option>
-                            <option value="Monthly (15th)">
-                                Monthly (15th)
-                            </option>
-                            <option value="Monthly (30th)">
-                                Monthly (30th)
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="minimum-amount">Minimum Amount (₱):</label>
-                        <input
-                            v-model.number="editingSchedule.minimumAmount"
-                            id="minimum-amount"
-                            type="number"
-                            class="form-input"
-                            placeholder="5000"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="processing-time">Processing Time:</label>
-                        <select
-                            v-model="editingSchedule.processingTime"
-                            id="processing-time"
-                            class="form-input"
-                        >
-                            <option value="1-3 business days">
-                                1-3 business days
-                            </option>
-                            <option value="2-5 business days">
-                                2-5 business days
-                            </option>
-                            <option value="5-7 business days">
-                                5-7 business days
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn-secondary" @click="closeScheduleModal">
-                        Cancel
-                    </button>
-                    <button class="btn-primary" @click="saveSchedule">
-                        Save Changes
-                    </button>
-                </div>
-            </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" @click="closeMethodModal">Cancel</button>
+          <button class="btn-primary" @click="saveNewMethod">Add Method</button>
         </div>
-
-        <!-- Edit Payout Method Modal -->
-        <div
-            v-if="showEditMethodModal"
-            class="modal-overlay"
-            @click="closeEditMethodModal"
-        >
-            <div class="modal-content" @click.stop>
-                <div class="modal-header">
-                    <h2>Edit Payout Method</h2>
-                    <button class="modal-close" @click="closeEditMethodModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="edit-method-type">Method Type:</label>
-                        <select
-                            v-model="editingMethod.type"
-                            id="edit-method-type"
-                            class="form-input"
-                        >
-                            <option value="bank">Bank Transfer</option>
-                            <option value="gcash">GCash</option>
-                            <option value="paypal">PayPal</option>
-                            <option value="paymaya">PayMaya</option>
-                        </select>
-                    </div>
-
-                    <div
-                        v-if="editingMethod.type === 'bank'"
-                        class="form-group"
-                    >
-                        <label for="edit-bank-name">Bank Name:</label>
-                        <input
-                            v-model="editingMethod.bankName"
-                            id="edit-bank-name"
-                            type="text"
-                            class="form-input"
-                            placeholder="e.g., BDO, BPI, RCBC"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit-account-name">Account Name:</label>
-                        <input
-                            v-model="editingMethod.accountName"
-                            id="edit-account-name"
-                            type="text"
-                            class="form-input"
-                            placeholder="Full account name"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit-account-number">Account Number:</label>
-                        <input
-                            v-model="editingMethod.accountNumber"
-                            id="edit-account-number"
-                            type="text"
-                            class="form-input"
-                            placeholder="Account or phone number"
-                        />
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn-secondary" @click="closeEditMethodModal">
-                        Cancel
-                    </button>
-                    <button class="btn-primary" @click="saveEditMethod">
-                        Save Changes
-                    </button>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 import { ref, computed } from "vue";
 
 export default {
-    name: "PayoutHistory",
-    setup() {
-        const selectedPeriod = ref("all");
-        const currentPage = ref(1);
-        const itemsPerPage = 10;
-        const showPayoutModal = ref(false);
-        const selectedPayout = ref(null);
-        const showMethodModal = ref(false);
-        const showScheduleModal = ref(false);
-        const showEditMethodModal = ref(false);
-        const newMethod = ref({
-            type: "bank",
-            accountName: "",
-            accountNumber: "",
-            bankName: "",
-        });
-        const editingMethod = ref({
-            id: null,
-            type: "bank",
-            accountName: "",
-            accountNumber: "",
-            bankName: "",
-        });
-        const editingSchedule = ref({
-            type: "Monthly (15th)",
-            minimumAmount: 5000,
-            processingTime: "1-3 business days",
-        });
+  name: 'PayoutHistory',
+  setup() {
+    const selectedPeriod = ref('all')
+    const currentPage = ref(1)
+    const itemsPerPage = 10
+    const showPayoutModal = ref(false)
+    const selectedPayout = ref(null)
+    const showMethodModal = ref(false)
+    const newMethod = ref({
+      type: 'bank',
+      accountName: '',
+      accountNumber: '',
+      bankName: ''
+    })
 
         // Mock payout data
         const payouts = ref([
@@ -759,42 +587,42 @@ export default {
             },
         ]);
 
-        const payoutMethods = ref([
-            {
-                id: 1,
-                name: "Bank Transfer",
-                description: "Direct bank transfer to your account",
-                account: "****1234",
-                processingTime: "1-3 business days",
-                fees: "Free",
-                active: true,
-            },
-            {
-                id: 2,
-                name: "GCash",
-                description: "Instant transfer to your GCash wallet",
-                account: "0917****1234",
-                processingTime: "Instant",
-                fees: "₱15 per transaction",
-                active: false,
-            },
-            {
-                id: 3,
-                name: "PayPal",
-                description: "Transfer to your PayPal account",
-                account: "user@example.com",
-                processingTime: "1-2 business days",
-                fees: "2.9% + ₱15",
-                active: false,
-            },
-        ]);
+    const payoutMethods = ref([
+      {
+        id: 1,
+        name: 'Bank Transfer',
+        description: 'Direct bank transfer to your account',
+        account: '****1234',
+        processingTime: '1-3 business days',
+        fees: 'Free',
+        active: true
+      },
+      {
+        id: 2,
+        name: 'GCash',
+        description: 'Instant transfer to your GCash wallet',
+        account: '0917****1234',
+        processingTime: 'Instant',
+        fees: '₱15 per transaction',
+        active: false
+      },
+      {
+        id: 3,
+        name: 'PayPal',
+        description: 'Transfer to your PayPal account',
+        account: 'user@example.com',
+        processingTime: '1-2 business days',
+        fees: '2.9% + ₱15',
+        active: false
+      }
+    ])
 
-        const schedule = ref({
-            type: "Monthly (15th)",
-            nextPayout: "January 15, 2024",
-            minimumAmount: 5000,
-            processingTime: "1-3 business days",
-        });
+    const schedule = {
+      type: 'Monthly (15th)',
+      nextPayout: 'January 15, 2024',
+      minimumAmount: 5000,
+      processingTime: '1-3 business days'
+    }
 
         const filteredPayouts = computed(() => {
             let filtered = payouts.value;
@@ -932,34 +760,9 @@ export default {
             alert("Primary payout method updated!");
         };
 
-        const editMethod = (methodId) => {
-            const method = payoutMethods.value.find((m) => m.id === methodId);
-            if (method) {
-                editingMethod.value = { ...method };
-                showEditMethodModal.value = true;
-            }
-        };
-
-        const closeEditMethodModal = () => {
-            showEditMethodModal.value = false;
-            editingMethod.value = {
-                id: null,
-                type: "bank",
-                accountName: "",
-                accountNumber: "",
-                bankName: "",
-            };
-        };
-
-        const saveEditMethod = () => {
-            const methodIndex = payoutMethods.value.findIndex(
-                (m) => m.id === editingMethod.value.id
-            );
-            if (methodIndex > -1) {
-                payoutMethods.value[methodIndex] = { ...editingMethod.value };
-            }
-            closeEditMethodModal();
-        };
+    const editMethod = (methodId) => {
+      alert(`Editing payout method ${methodId}...`)
+    }
 
         const addNewMethod = () => {
             showMethodModal.value = true;
@@ -996,76 +799,51 @@ export default {
             };
         };
 
-        const editSchedule = () => {
-            editingSchedule.value = {
-                type: "Monthly (15th)",
-                minimumAmount: 5000,
-                processingTime: "1-3 business days",
-            };
-            showScheduleModal.value = true;
-        };
-
-        const closeScheduleModal = () => {
-            showScheduleModal.value = false;
-        };
-
-        const saveSchedule = () => {
-            schedule.value.type = editingSchedule.value.type;
-            schedule.value.minimumAmount = editingSchedule.value.minimumAmount;
-            schedule.value.processingTime =
-                editingSchedule.value.processingTime;
-            closeScheduleModal();
-        };
+    const editSchedule = () => {
+      alert('Editing payout schedule...')
+    }
 
         const exportPayouts = () => {
             alert("Exporting payout history...");
         };
 
-        return {
-            selectedPeriod,
-            currentPage,
-            showPayoutModal,
-            selectedPayout,
-            showMethodModal,
-            newMethod,
-            payouts,
-            payoutMethods,
-            schedule,
-            filteredPayouts,
-            paginatedPayouts,
-            totalPages,
-            totalPayouts,
-            pendingPayouts,
-            pendingCount,
-            payoutCount,
-            averagePayout,
-            totalFees,
-            formatCurrency,
-            formatDate,
-            formatTime,
-            filterPayouts,
-            changePage,
-            viewPayoutDetails,
-            closePayoutModal,
-            downloadReceipt,
-            setPrimaryMethod,
-            editMethod,
-            closeEditMethodModal,
-            saveEditMethod,
-            editingMethod,
-            showEditMethodModal,
-            addNewMethod,
-            saveNewMethod,
-            closeMethodModal,
-            editSchedule,
-            closeScheduleModal,
-            saveSchedule,
-            editingSchedule,
-            showScheduleModal,
-            exportPayouts,
-        };
-    },
-};
+    return {
+      selectedPeriod,
+      currentPage,
+      showPayoutModal,
+      selectedPayout,
+      showMethodModal,
+      newMethod,
+      payouts,
+      payoutMethods,
+      schedule,
+      filteredPayouts,
+      paginatedPayouts,
+      totalPages,
+      totalPayouts,
+      pendingPayouts,
+      pendingCount,
+      payoutCount,
+      averagePayout,
+      totalFees,
+      formatCurrency,
+      formatDate,
+      formatTime,
+      filterPayouts,
+      changePage,
+      viewPayoutDetails,
+      closePayoutModal,
+      downloadReceipt,
+      setPrimaryMethod,
+      editMethod,
+      addNewMethod,
+      saveNewMethod,
+      closeMethodModal,
+      editSchedule,
+      exportPayouts
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -1583,16 +1361,16 @@ export default {
 
 /* Modal Styles */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .modal {
@@ -1634,18 +1412,7 @@ export default {
 }
 
 .modal-content {
-    background: white;
-    border-radius: 0.75rem;
-    padding: 0;
-    max-width: 600px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-}
-
-.modal-body {
-    padding: 1.5rem;
+  padding: 1.5rem;
 }
 
 .modal-actions {
