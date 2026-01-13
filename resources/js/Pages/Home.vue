@@ -269,7 +269,7 @@
 
         <div class="bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 hover:border-green-200 transition-all group flex flex-col">
           <div class="h-64 relative overflow-hidden bg-gray-50">
-            <img src="https://images.unsplash.com/photo-1571771894821-ad99026107b8?auto=format&fit=crop&q=80&w=800" alt="Davao Golden Bananas" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+            <img src="https://www.cartacapital.com.br/wp-content/uploads/2025/09/banana-fruta-outono-1024x683.jpg" alt="Davao Golden Bananas" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
 
             <div class="absolute top-4 left-4 flex flex-col gap-2">
               <span class="bg-green-600 text-white text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest shadow-lg shadow-green-900/20">Fresh Picked</span>
