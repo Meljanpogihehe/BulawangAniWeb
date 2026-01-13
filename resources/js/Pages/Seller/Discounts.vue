@@ -268,6 +268,117 @@
         </div>
       </div>
     </div>
+
+    <!-- Edit Discount Modal -->
+    <div v-if="editModalOpen" class="modal-overlay" @click="cancelEdit">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>Edit Discount</h2>
+          <button class="modal-close" @click="cancelEdit">&times;</button>
+        </div>
+        <div class="modal-body" v-if="editingDiscount">
+          <form @submit.prevent="saveEditDiscount" class="edit-form">
+            <div class="form-group">
+              <label for="edit-name">Discount Name</label>
+              <input
+                id="edit-name"
+                v-model="editingDiscount.name"
+                type="text"
+                required
+                class="form-input"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="edit-code">Discount Code</label>
+              <input
+                id="edit-code"
+                v-model="editingDiscount.code"
+                type="text"
+                required
+                class="form-input"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="edit-type">Discount Type</label>
+              <select
+                id="edit-type"
+                v-model="editingDiscount.type"
+                required
+                class="form-input"
+              >
+                <option value="percentage">Percentage</option>
+                <option value="fixed">Fixed Amount</option>
+                <option value="buy-one-get-one">Buy One Get One</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="edit-value">Discount Value</label>
+              <input
+                id="edit-value"
+                v-model.number="editingDiscount.value"
+                type="number"
+                :min="0"
+                required
+                class="form-input"
+              >
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="edit-start">Start Date</label>
+                <input
+                  id="edit-start"
+                  v-model="editingDiscount.startDate"
+                  type="datetime-local"
+                  required
+                  class="form-input"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="edit-end">End Date</label>
+                <input
+                  id="edit-end"
+                  v-model="editingDiscount.endDate"
+                  type="datetime-local"
+                  required
+                  class="form-input"
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="edit-max-uses">Max Uses (leave empty for unlimited)</label>
+              <input
+                id="edit-max-uses"
+                v-model.number="editingDiscount.maxUses"
+                type="number"
+                :min="0"
+                class="form-input"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input
+                  v-model="editingDiscount.active"
+                  type="checkbox"
+                >
+                Active
+              </label>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" @click="cancelEdit">Cancel</button>
+              <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -550,8 +661,30 @@ export default {
       alert(`Discount code "${code}" copied to clipboard!`)
     }
 
+    const editModalOpen = ref(false)
+    const editingDiscount = ref(null)
+
     const editDiscount = (discountId) => {
-      alert(`Editing discount: ${discountId}`)
+      const discount = discounts.value.find(d => d.id === discountId)
+      if (discount) {
+        editingDiscount.value = { ...discount }
+        editModalOpen.value = true
+      }
+    }
+
+    const saveEditDiscount = () => {
+      const index = discounts.value.findIndex(d => d.id === editingDiscount.value.id)
+      if (index > -1) {
+        discounts.value[index] = { ...editingDiscount.value }
+        editModalOpen.value = false
+        editingDiscount.value = null
+        alert('Discount updated successfully!')
+      }
+    }
+
+    const cancelEdit = () => {
+      editModalOpen.value = false
+      editingDiscount.value = null
     }
 
     const toggleDiscount = (discountId) => {
@@ -611,6 +744,8 @@ export default {
       aovChange,
       newCustomers,
       newCustomerGrowth,
+      editModalOpen,
+      editingDiscount,
       getDiscountClasses,
       getDiscountValue,
       getDiscountStatusClass,
@@ -625,6 +760,8 @@ export default {
       changePage,
       copyCode,
       editDiscount,
+      saveEditDiscount,
+      cancelEdit,
       toggleDiscount,
       deleteDiscount,
       addNewDiscount,
@@ -1220,6 +1357,120 @@ export default {
 
 .analytics-change.positive { color: #10b981; }
 .analytics-change.negative { color: #ef4444; }
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
 
 /* Responsive styles */
 @media (max-width: 768px) {
