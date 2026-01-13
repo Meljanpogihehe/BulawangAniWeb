@@ -295,6 +295,48 @@
         </div>
       </div>
     </div>
+
+    <!-- Add Method Modal -->
+    <div v-if="showMethodModal" class="modal-overlay" @click="closeMethodModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>Add Payout Method</h2>
+          <button class="modal-close" @click="closeMethodModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="method-type">Method Type:</label>
+            <select v-model="newMethod.type" id="method-type" class="form-input">
+              <option value="bank">Bank Transfer</option>
+              <option value="gcash">GCash</option>
+              <option value="paypal">PayPal</option>
+              <option value="paymaya">PayMaya</option>
+            </select>
+          </div>
+
+          <div v-if="newMethod.type === 'bank'" class="form-group">
+            <label for="bank-name">Bank Name:</label>
+            <input v-model="newMethod.bankName" id="bank-name" type="text" class="form-input" placeholder="e.g., BDO, BPI, RCBC">
+          </div>
+
+          <div class="form-group">
+            <label for="account-name">Account Name:</label>
+            <input v-model="newMethod.accountName" id="account-name" type="text" class="form-input" placeholder="Full account name">
+          </div>
+
+          <div class="form-group">
+            <label for="account-number">Account Number:</label>
+            <input v-model="newMethod.accountNumber" id="account-number" type="text" class="form-input" placeholder="Account or phone number">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" @click="closeMethodModal">Cancel</button>
+          <button class="btn-primary" @click="saveNewMethod">Add Method</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -309,6 +351,13 @@ export default {
     const itemsPerPage = 10
     const showPayoutModal = ref(false)
     const selectedPayout = ref(null)
+    const showMethodModal = ref(false)
+    const newMethod = ref({
+      type: 'bank',
+      accountName: '',
+      accountNumber: '',
+      bankName: ''
+    })
 
     // Mock payout data
     const payouts = ref([
@@ -530,7 +579,38 @@ export default {
     }
 
     const addNewMethod = () => {
-      alert('Adding new payout method...')
+      showMethodModal.value = true
+      newMethod.value = {
+        type: 'bank',
+        accountName: '',
+        accountNumber: '',
+        bankName: ''
+      }
+    }
+
+    const saveNewMethod = () => {
+      if (newMethod.value.accountName && newMethod.value.accountNumber) {
+        const method = {
+          id: payoutMethods.value.length + 1,
+          type: newMethod.value.type,
+          accountName: newMethod.value.accountName,
+          accountNumber: newMethod.value.accountNumber,
+          bankName: newMethod.value.bankName || 'Bank',
+          isPrimary: payoutMethods.value.length === 0
+        }
+        payoutMethods.value.push(method)
+        closeMethodModal()
+      }
+    }
+
+    const closeMethodModal = () => {
+      showMethodModal.value = false
+      newMethod.value = {
+        type: 'bank',
+        accountName: '',
+        accountNumber: '',
+        bankName: ''
+      }
     }
 
     const editSchedule = () => {
@@ -546,6 +626,8 @@ export default {
       currentPage,
       showPayoutModal,
       selectedPayout,
+      showMethodModal,
+      newMethod,
       payouts,
       payoutMethods,
       schedule,
@@ -569,6 +651,8 @@ export default {
       setPrimaryMethod,
       editMethod,
       addNewMethod,
+      saveNewMethod,
+      closeMethodModal,
       editSchedule,
       exportPayouts
     }
@@ -1073,7 +1157,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1250,5 +1334,33 @@ export default {
   .schedule-item {
     min-width: auto;
   }
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 </style>
