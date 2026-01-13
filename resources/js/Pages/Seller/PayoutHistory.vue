@@ -458,38 +458,48 @@
                         />
                     </div>
 
-          <div class="form-group">
-            <label for="account-number">Account Number:</label>
-            <input v-model="newMethod.accountNumber" id="account-number" type="text" class="form-input" placeholder="Account or phone number">
-          </div>
+                    <div class="form-group">
+                        <label for="account-number">Account Number:</label>
+                        <input
+                            v-model="newMethod.accountNumber"
+                            id="account-number"
+                            type="text"
+                            class="form-input"
+                            placeholder="Account or phone number"
+                        />
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" @click="closeMethodModal">
+                        Cancel
+                    </button>
+                    <button class="btn-primary" @click="saveNewMethod">
+                        Add Method
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="modal-actions">
-          <button class="btn-secondary" @click="closeMethodModal">Cancel</button>
-          <button class="btn-primary" @click="saveNewMethod">Add Method</button>
-        </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script>
 import { ref, computed } from "vue";
 
 export default {
-  name: 'PayoutHistory',
-  setup() {
-    const selectedPeriod = ref('all')
-    const currentPage = ref(1)
-    const itemsPerPage = 10
-    const showPayoutModal = ref(false)
-    const selectedPayout = ref(null)
-    const showMethodModal = ref(false)
-    const newMethod = ref({
-      type: 'bank',
-      accountName: '',
-      accountNumber: '',
-      bankName: ''
-    })
+    name: "PayoutHistory",
+    setup() {
+        const selectedPeriod = ref("all");
+        const currentPage = ref(1);
+        const itemsPerPage = 10;
+        const showPayoutModal = ref(false);
+        const selectedPayout = ref(null);
+        const showMethodModal = ref(false);
+        const newMethod = ref({
+            type: "bank",
+            accountName: "",
+            accountNumber: "",
+            bankName: "",
+        });
 
         // Mock payout data
         const payouts = ref([
@@ -587,42 +597,42 @@ export default {
             },
         ]);
 
-    const payoutMethods = ref([
-      {
-        id: 1,
-        name: 'Bank Transfer',
-        description: 'Direct bank transfer to your account',
-        account: '****1234',
-        processingTime: '1-3 business days',
-        fees: 'Free',
-        active: true
-      },
-      {
-        id: 2,
-        name: 'GCash',
-        description: 'Instant transfer to your GCash wallet',
-        account: '0917****1234',
-        processingTime: 'Instant',
-        fees: '₱15 per transaction',
-        active: false
-      },
-      {
-        id: 3,
-        name: 'PayPal',
-        description: 'Transfer to your PayPal account',
-        account: 'user@example.com',
-        processingTime: '1-2 business days',
-        fees: '2.9% + ₱15',
-        active: false
-      }
-    ])
+        const payoutMethods = ref([
+            {
+                id: 1,
+                name: "Bank Transfer",
+                description: "Direct bank transfer to your account",
+                account: "****1234",
+                processingTime: "1-3 business days",
+                fees: "Free",
+                active: true,
+            },
+            {
+                id: 2,
+                name: "GCash",
+                description: "Instant transfer to your GCash wallet",
+                account: "0917****1234",
+                processingTime: "Instant",
+                fees: "₱15 per transaction",
+                active: false,
+            },
+            {
+                id: 3,
+                name: "PayPal",
+                description: "Transfer to your PayPal account",
+                account: "user@example.com",
+                processingTime: "1-2 business days",
+                fees: "2.9% + ₱15",
+                active: false,
+            },
+        ]);
 
-    const schedule = {
-      type: 'Monthly (15th)',
-      nextPayout: 'January 15, 2024',
-      minimumAmount: 5000,
-      processingTime: '1-3 business days'
-    }
+        const schedule = {
+            type: "Monthly (15th)",
+            nextPayout: "January 15, 2024",
+            minimumAmount: 5000,
+            processingTime: "1-3 business days",
+        };
 
         const filteredPayouts = computed(() => {
             let filtered = payouts.value;
@@ -760,9 +770,9 @@ export default {
             alert("Primary payout method updated!");
         };
 
-    const editMethod = (methodId) => {
-      alert(`Editing payout method ${methodId}...`)
-    }
+        const editMethod = (methodId) => {
+            alert(`Editing payout method ${methodId}...`);
+        };
 
         const addNewMethod = () => {
             showMethodModal.value = true;
@@ -799,51 +809,51 @@ export default {
             };
         };
 
-    const editSchedule = () => {
-      alert('Editing payout schedule...')
-    }
+        const editSchedule = () => {
+            alert("Editing payout schedule...");
+        };
 
         const exportPayouts = () => {
             alert("Exporting payout history...");
         };
 
-    return {
-      selectedPeriod,
-      currentPage,
-      showPayoutModal,
-      selectedPayout,
-      showMethodModal,
-      newMethod,
-      payouts,
-      payoutMethods,
-      schedule,
-      filteredPayouts,
-      paginatedPayouts,
-      totalPages,
-      totalPayouts,
-      pendingPayouts,
-      pendingCount,
-      payoutCount,
-      averagePayout,
-      totalFees,
-      formatCurrency,
-      formatDate,
-      formatTime,
-      filterPayouts,
-      changePage,
-      viewPayoutDetails,
-      closePayoutModal,
-      downloadReceipt,
-      setPrimaryMethod,
-      editMethod,
-      addNewMethod,
-      saveNewMethod,
-      closeMethodModal,
-      editSchedule,
-      exportPayouts
-    }
-  }
-}
+        return {
+            selectedPeriod,
+            currentPage,
+            showPayoutModal,
+            selectedPayout,
+            showMethodModal,
+            newMethod,
+            payouts,
+            payoutMethods,
+            schedule,
+            filteredPayouts,
+            paginatedPayouts,
+            totalPages,
+            totalPayouts,
+            pendingPayouts,
+            pendingCount,
+            payoutCount,
+            averagePayout,
+            totalFees,
+            formatCurrency,
+            formatDate,
+            formatTime,
+            filterPayouts,
+            changePage,
+            viewPayoutDetails,
+            closePayoutModal,
+            downloadReceipt,
+            setPrimaryMethod,
+            editMethod,
+            addNewMethod,
+            saveNewMethod,
+            closeMethodModal,
+            editSchedule,
+            exportPayouts,
+        };
+    },
+};
 </script>
 
 <style scoped>
@@ -1361,16 +1371,16 @@ export default {
 
 /* Modal Styles */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }
 
 .modal {
@@ -1412,7 +1422,18 @@ export default {
 }
 
 .modal-content {
-  padding: 1.5rem;
+    background: white;
+    border-radius: 0.75rem;
+    padding: 0;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-body {
+    padding: 1.5rem;
 }
 
 .modal-actions {
@@ -1428,6 +1449,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    width: 100%;
 }
 
 .detail-section {
