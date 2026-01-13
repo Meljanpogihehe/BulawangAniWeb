@@ -378,6 +378,48 @@
         </div>
       </div>
     </div>
+
+    <!-- Edit Payout Method Modal -->
+    <div v-if="showEditMethodModal" class="modal-overlay" @click="closeEditMethodModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h2>Edit Payout Method</h2>
+          <button class="modal-close" @click="closeEditMethodModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="edit-method-type">Method Type:</label>
+            <select v-model="editingMethod.type" id="edit-method-type" class="form-input">
+              <option value="bank">Bank Transfer</option>
+              <option value="gcash">GCash</option>
+              <option value="paypal">PayPal</option>
+              <option value="paymaya">PayMaya</option>
+            </select>
+          </div>
+
+          <div v-if="editingMethod.type === 'bank'" class="form-group">
+            <label for="edit-bank-name">Bank Name:</label>
+            <input v-model="editingMethod.bankName" id="edit-bank-name" type="text" class="form-input" placeholder="e.g., BDO, BPI, RCBC">
+          </div>
+
+          <div class="form-group">
+            <label for="edit-account-name">Account Name:</label>
+            <input v-model="editingMethod.accountName" id="edit-account-name" type="text" class="form-input" placeholder="Full account name">
+          </div>
+
+          <div class="form-group">
+            <label for="edit-account-number">Account Number:</label>
+            <input v-model="editingMethod.accountNumber" id="edit-account-number" type="text" class="form-input" placeholder="Account or phone number">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" @click="closeEditMethodModal">Cancel</button>
+          <button class="btn-primary" @click="saveEditMethod">Save Changes</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -394,7 +436,15 @@ export default {
     const selectedPayout = ref(null)
     const showMethodModal = ref(false)
     const showScheduleModal = ref(false)
+    const showEditMethodModal = ref(false)
     const newMethod = ref({
+      type: 'bank',
+      accountName: '',
+      accountNumber: '',
+      bankName: ''
+    })
+    const editingMethod = ref({
+      id: null,
       type: 'bank',
       accountName: '',
       accountNumber: '',
@@ -622,7 +672,30 @@ export default {
     }
 
     const editMethod = (methodId) => {
-      alert(`Editing payout method ${methodId}...`)
+      const method = payoutMethods.value.find(m => m.id === methodId)
+      if (method) {
+        editingMethod.value = { ...method }
+        showEditMethodModal.value = true
+      }
+    }
+
+    const closeEditMethodModal = () => {
+      showEditMethodModal.value = false
+      editingMethod.value = {
+        id: null,
+        type: 'bank',
+        accountName: '',
+        accountNumber: '',
+        bankName: ''
+      }
+    }
+
+    const saveEditMethod = () => {
+      const methodIndex = payoutMethods.value.findIndex(m => m.id === editingMethod.value.id)
+      if (methodIndex > -1) {
+        payoutMethods.value[methodIndex] = { ...editingMethod.value }
+      }
+      closeEditMethodModal()
     }
 
     const addNewMethod = () => {
@@ -711,6 +784,10 @@ export default {
       downloadReceipt,
       setPrimaryMethod,
       editMethod,
+      closeEditMethodModal,
+      saveEditMethod,
+      editingMethod,
+      showEditMethodModal,
       addNewMethod,
       saveNewMethod,
       closeMethodModal,
