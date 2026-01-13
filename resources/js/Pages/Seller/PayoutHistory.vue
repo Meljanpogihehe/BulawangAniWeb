@@ -30,7 +30,7 @@
                 <div class="card-content">
                     <div class="card-label">Total Payouts</div>
                     <div class="card-value">
-                        ₱{{ formatCurrency(totalPayouts) }}
+                        {{ formatCurrency(totalPayouts) }}
                     </div>
                     <div class="card-change">
                         {{ payoutCount }} transactions
@@ -45,7 +45,7 @@
                 <div class="card-content">
                     <div class="card-label">Pending Payouts</div>
                     <div class="card-value">
-                        ₱{{ formatCurrency(pendingPayouts) }}
+                        {{ formatCurrency(pendingPayouts) }}
                     </div>
                     <div class="card-change">
                         {{ pendingCount }} transactions
@@ -60,7 +60,7 @@
                 <div class="card-content">
                     <div class="card-label">Average Payout</div>
                     <div class="card-value">
-                        ₱{{ formatCurrency(averagePayout) }}
+                        {{ formatCurrency(averagePayout) }}
                     </div>
                     <div class="card-change">per transaction</div>
                 </div>
@@ -73,7 +73,7 @@
                 <div class="card-content">
                     <div class="card-label">Total Fees</div>
                     <div class="card-value">
-                        -₱{{ formatCurrency(totalFees) }}
+                        -{{ formatCurrency(totalFees) }}
                     </div>
                     <div class="card-change">Platform fees</div>
                 </div>
@@ -115,10 +115,10 @@
                     </div>
                     <div class="table-cell">
                         <div class="payout-amount">
-                            ₱{{ formatCurrency(payout.amount) }}
+                            {{ formatCurrency(payout.amount) }}
                         </div>
                         <div class="payout-net">
-                            Net: ₱{{ formatCurrency(payout.netAmount) }}
+                            Net: {{ formatCurrency(payout.netAmount) }}
                         </div>
                     </div>
                     <div class="table-cell">
@@ -258,7 +258,7 @@
                     <div class="schedule-item">
                         <span class="schedule-label">Minimum Amount:</span>
                         <span class="schedule-value"
-                            >₱{{ formatCurrency(schedule.minimumAmount) }}</span
+                            >{{ formatCurrency(schedule.minimumAmount) }}</span
                         >
                     </div>
                     <div class="schedule-item">
@@ -326,7 +326,7 @@
                                         >Gross Amount:</span
                                     >
                                     <span class="breakdown-value"
-                                        >₱{{
+                                        >{{
                                             formatCurrency(
                                                 selectedPayout?.amount
                                             )
@@ -338,7 +338,7 @@
                                         >Platform Fees:</span
                                     >
                                     <span class="breakdown-value"
-                                        >-₱{{
+                                        >-{{
                                             formatCurrency(selectedPayout?.fees)
                                         }}</span
                                     >
@@ -348,7 +348,7 @@
                                         >Processing Fees:</span
                                     >
                                     <span class="breakdown-value"
-                                        >-₱{{
+                                        >-{{
                                             formatCurrency(
                                                 selectedPayout?.processingFees
                                             )
@@ -360,7 +360,7 @@
                                         >Net Amount:</span
                                     >
                                     <span class="breakdown-value"
-                                        >₱{{
+                                        >{{
                                             formatCurrency(
                                                 selectedPayout?.netAmount
                                             )
@@ -385,7 +385,7 @@
                                         formatDate(order.date)
                                     }}</span>
                                     <span class="order-amount"
-                                        >₱{{
+                                        >{{
                                             formatCurrency(order.amount)
                                         }}</span
                                     >

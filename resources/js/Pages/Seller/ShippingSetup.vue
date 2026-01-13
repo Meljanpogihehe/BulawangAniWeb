@@ -42,7 +42,7 @@
             <div v-for="rate in zone.rates" :key="rate.id" class="rate-item">
               <div class="rate-info">
                 <span class="rate-name">{{ rate.name }}</span>
-                <span class="rate-price">₱{{ formatCurrency(rate.price) }}</span>
+                <span class="rate-price">{{ formatCurrency(rate.price) }}</span>
               </div>
               <div class="rate-details">
                 <span class="rate-time">{{ rate.deliveryTime }}</span>
@@ -88,11 +88,11 @@
           <div class="method-details">
             <div class="detail-item">
               <span class="detail-label">Base Price:</span>
-              <span class="detail-value">₱{{ formatCurrency(method.basePrice) }}</span>
+              <span class="detail-value">{{ formatCurrency(method.basePrice) }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Per kg:</span>
-              <span class="detail-value">₱{{ formatCurrency(method.perKg) }}</span>
+              <span class="detail-value">{{ formatCurrency(method.perKg) }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Estimated Time:</span>
@@ -135,7 +135,7 @@
             </div>
             <div class="detail-item">
               <span class="detail-label">Cost:</span>
-              <span class="detail-value">₱{{ formatCurrency(pkg.cost) }}</span>
+              <span class="detail-value">{{ formatCurrency(pkg.cost) }}</span>
             </div>
           </div>
         </div>
@@ -208,7 +208,7 @@
           <div class="form-group">
             <label>Minimum Order Amount</label>
             <div class="price-input">
-              <span class="currency-symbol">₱</span>
+              <span class="currency-symbol"></span>
               <input 
                 v-model.number="freeShipping.threshold"
                 type="number"
@@ -422,9 +422,9 @@ export default {
     const shippingRules = ref([
       {
         id: 1,
-        name: 'Free Shipping Over ₱2000',
-        description: 'Free standard shipping for orders over ₱2000',
-        condition: 'Order total > ₱2000',
+        name: 'Free Shipping Over 2000',
+        description: 'Free standard shipping for orders over 2000',
+        condition: 'Order total > 2000',
         action: 'Free shipping',
         value: 'Standard rate waived'
       },
@@ -434,7 +434,7 @@ export default {
         description: 'Additional charge for items over 5kg',
         condition: 'Item weight > 5kg',
         action: 'Add surcharge',
-        value: '₱100 per item'
+        value: '100 per item'
       }
     ])
 
