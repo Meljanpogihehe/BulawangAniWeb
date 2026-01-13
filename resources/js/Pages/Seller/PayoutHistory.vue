@@ -1593,6 +1593,7 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    padding: 2rem;
 }
 
 .modal {
@@ -1637,15 +1638,20 @@ export default {
     background: white;
     border-radius: 0.75rem;
     padding: 0;
-    max-width: 600px;
-    width: 90%;
+    max-width: 1000px;
+    width: 95%;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
 }
 
 .modal-body {
     padding: 1.5rem;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .modal-actions {
@@ -1661,6 +1667,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    width: 100%;
 }
 
 .detail-section {
