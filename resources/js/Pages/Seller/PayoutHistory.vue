@@ -550,12 +550,12 @@ export default {
       }
     ])
 
-    const schedule = {
+    const schedule = ref({
       type: 'Monthly (15th)',
       nextPayout: 'January 15, 2024',
       minimumAmount: 5000,
       processingTime: '1-3 business days'
-    }
+    })
 
     const filteredPayouts = computed(() => {
       let filtered = payouts.value
@@ -747,7 +747,9 @@ export default {
     }
 
     const saveSchedule = () => {
-      // Update schedule with edited values
+      schedule.value.type = editingSchedule.value.type
+      schedule.value.minimumAmount = editingSchedule.value.minimumAmount
+      schedule.value.processingTime = editingSchedule.value.processingTime
       closeScheduleModal()
     }
 
