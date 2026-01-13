@@ -47,7 +47,7 @@
                   </span>
                 </td>
                 <td>
-                  <button class="btn-view">View</button>
+                  <button class="btn-view" @click="openViewModal(customer)">View</button>
                   <button class="btn-edit" @click="openEditModal(customer)">Edit</button>
                   <button class="btn-delete" @click="openDeleteModal(customer)">{{ customer.status === 'Suspended' ? 'Activate' : 'Suspend' }}</button>
                 </td>
@@ -167,19 +167,57 @@
         </div>
       </AdminModal>
 
-      <!-- Delete Customer Modal -->
+      <!-- View Customer Modal -->
+      <AdminModal
+        :isOpen="showViewModal"
+        title="View Customer Details"
+        :isLoading="false"
+        @close="closeViewModal"
+      >
+        <div class="form-group">
+          <label>Full Name</label>
+          <p>{{ viewCustomer.name }}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <p>{{ viewCustomer.email }}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <p>{{ viewCustomer.phone }}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Orders</label>
+          <p>{{ viewCustomer.orderCount }}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Total Spent</label>
+          <p>₱{{ viewCustomer.totalSpent }}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <p>{{ viewCustomer.status }}</p>
+        </div>
+      </AdminModal>
+
+      <!-- Status Change Modal -->
       <AdminModal
         :isOpen="showDeleteModal"
-        title="Delete Customer"
-        submitText="Delete Customer"
+        :title="actionType === 'suspend' ? 'Suspend Customer' : 'Activate Customer'"
+        :submitText="actionType === 'suspend' ? 'Suspend Customer' : 'Activate Customer'"
         :isLoading="isSubmitting"
         @close="closeDeleteModal"
-        @submit="deleteCustomer"
+        @submit="toggleCustomerStatus"
       >
         <div class="delete-warning">
-          <p>Are you sure you want to delete this customer account?</p>
+          <p>Are you sure you want to {{ actionType }} this customer account?</p>
           <p class="delete-name">{{ deleteCustomerData.name }}</p>
-          <p class="delete-warning-text">This action cannot be undone.</p>
+          <p class="delete-warning-text">This will change the customer's status.</p>
         </div>
       </AdminModal>
 
@@ -208,6 +246,7 @@ export default {
       // Modal states
       showAddModal: false,
       showEditModal: false,
+      showViewModal: false,
       showDeleteModal: false,
       
       // Customer data
@@ -237,6 +276,8 @@ export default {
         id: null,
         name: ''
       },
+      viewCustomer: {},
+      actionType: '', // 'suspend' or 'activate'
       
       // Form errors
       addErrors: {},
@@ -286,15 +327,27 @@ export default {
       this.showEditModal = false
       this.resetEditForm()
     },
-    
+
+    openViewModal(customer) {
+      this.viewCustomer = { ...customer }
+      this.showViewModal = true
+    },
+
+    closeViewModal() {
+      this.showViewModal = false
+      this.viewCustomer = {}
+    },
+
     openDeleteModal(customer) {
       this.deleteCustomerData = { id: customer.id, name: customer.name }
+      this.actionType = customer.status === 'Suspended' ? 'activate' : 'suspend'
       this.showDeleteModal = true
     },
     
     closeDeleteModal() {
       this.showDeleteModal = false
       this.deleteCustomerData = { id: null, name: '' }
+      this.actionType = ''
     },
     
     // Form reset methods
@@ -453,23 +506,26 @@ export default {
       }
     },
     
-    async deleteCustomer() {
+    async toggleCustomerStatus() {
       this.isSubmitting = true
-      
+
       try {
-        // Remove customer from the list
-        this.customers = this.customers.filter(customer => customer.id !== this.deleteCustomerData.id)
-        
-        // Close modal
-        this.closeDeleteModal()
-        
-        // Show success message
-        this.showMessage('Customer account deleted successfully!', 'success')
-        
-        // In a real application, you would make an API call here
-        console.log('Customer deleted:', this.deleteCustomerData)
+        // Find and update the customer status
+        const index = this.customers.findIndex(customer => customer.id === this.deleteCustomerData.id)
+        if (index !== -1) {
+          this.customers[index].status = this.actionType === 'suspend' ? 'Suspended' : 'Active'
+
+          // Close modal
+          this.closeDeleteModal()
+
+          // Show success message
+          this.showMessage(`Customer account ${this.actionType}d successfully!`, 'success')
+
+          // In a real application, you would make an API call here
+          console.log('Customer status toggled:', this.deleteCustomerData, this.actionType)
+        }
       } catch (error) {
-        this.showMessage('Error deleting customer account. Please try again.', 'error')
+        this.showMessage('Error updating customer status. Please try again.', 'error')
       } finally {
         this.isSubmitting = false
       }
@@ -646,6 +702,15 @@ export default {
 
 .btn-delete:hover {
   background: #ffeaa7;
+}
+
+.form-group p {
+  padding: 0.75rem;
+  border: 2px solid #e8f1e1;
+  border-radius: 8px;
+  background: #f8faf7;
+  color: #5a6c5a;
+  margin-top: 0.5rem;
 }
 
 /* Responsive Design */
