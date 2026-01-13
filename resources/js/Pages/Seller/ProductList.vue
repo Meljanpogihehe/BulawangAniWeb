@@ -235,15 +235,84 @@
           </div>
         </div>
       </div>
+
+      <!-- Product View Modal -->
+      <AdminModal :is-open="showViewModal" title="Product Details" @close="showViewModal = false">
+        <template #footer></template>
+        <div v-if="selectedProduct" class="product-detail-modal">
+          <div class="product-detail-header">
+            <img :src="selectedProduct.image" :alt="selectedProduct.name" class="product-detail-image">
+            <div class="product-detail-basic">
+              <h3 class="product-detail-name">{{ selectedProduct.name }}</h3>
+              <p class="product-detail-sku">SKU: {{ selectedProduct.sku }}</p>
+              <span class="status-badge" :class="selectedProduct.status">{{ selectedProduct.status }}</span>
+            </div>
+          </div>
+
+          <div class="product-detail-content">
+            <div class="detail-section">
+              <h4>Product Information</h4>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <label>Category:</label>
+                  <span>{{ getCategoryName(selectedProduct.category) }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>Price:</label>
+                  <span>₱{{ formatCurrency(selectedProduct.price) }}</span>
+                </div>
+                <div class="detail-item" v-if="selectedProduct.salePrice">
+                  <label>Sale Price:</label>
+                  <span>₱{{ formatCurrency(selectedProduct.salePrice) }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>Stock:</label>
+                  <span>{{ selectedProduct.stock }} units</span>
+                </div>
+                <div class="detail-item">
+                  <label>Low Stock Threshold:</label>
+                  <span>{{ selectedProduct.lowStockThreshold }} units</span>
+                </div>
+                <div class="detail-item">
+                  <label>Stock Status:</label>
+                  <span :class="getStockStatusClass(selectedProduct)">{{ getStockStatusText(selectedProduct) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h4>Performance Metrics</h4>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <label>Rating:</label>
+                  <span>{{ selectedProduct.rating }}/5.0</span>
+                </div>
+                <div class="detail-item">
+                  <label>Total Orders:</label>
+                  <span>{{ selectedProduct.orders }}</span>
+                </div>
+                <div class="detail-item">
+                  <label>Total Revenue:</label>
+                  <span>₱{{ formatCurrency(selectedProduct.revenue) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AdminModal>
     </div>
 </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import AdminModal from '@/Components/AdminModal.vue'
 
 export default {
   name: 'ProductList',
+  components: {
+    AdminModal
+  },
   setup() {
     const router = useRouter()
     const searchQuery = ref('')
@@ -254,6 +323,8 @@ export default {
     const itemsPerPage = 10
     const selectedProducts = ref([])
     const bulkAction = ref('')
+    const showViewModal = ref(false)
+    const selectedProduct = ref(null)
 
     // Mock product data
     const products = ref([
@@ -492,7 +563,8 @@ export default {
     }
 
     const viewProduct = (productId) => {
-      alert(`Viewing product: ${productId}`)
+      selectedProduct.value = products.value.find(p => p.id === productId)
+      showViewModal.value = true
     }
 
     const editProduct = (productId) => {
@@ -598,7 +670,9 @@ export default {
       toggleStatus,
       toggleSelectAll,
       executeBulkAction,
-      exportProducts
+      exportProducts,
+      showViewModal,
+      selectedProduct
     }
   }
 }
@@ -1008,6 +1082,97 @@ export default {
   font-size: 1.5rem;
   font-weight: 700;
   color: #1f2937;
+}
+
+.product-detail-modal {
+  max-width: 800px;
+}
+
+.product-detail-header {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.product-detail-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+
+.product-detail-basic {
+  flex: 1;
+}
+
+.product-detail-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+}
+
+.product-detail-sku {
+  color: #6b7280;
+  margin: 0 0 1rem 0;
+  font-size: 0.875rem;
+}
+
+.product-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.detail-section h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 1rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.detail-item label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.detail-item span {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.detail-item span.in-stock {
+  color: #10b981;
+}
+
+.detail-item span.low-stock {
+  color: #f59e0b;
+}
+
+.detail-item span.out-of-stock {
+  color: #ef4444;
 }
 
 /* Responsive styles */
